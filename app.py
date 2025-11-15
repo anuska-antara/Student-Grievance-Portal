@@ -343,6 +343,63 @@ def reports():
 
     return render_template("reports.html", total=total, by_status=by_status, by_dept=by_dept)
 
+# ---------------- DELETE GRIEVANCE (Student Only) ----------------
+@app.route("/delete_grievance/<int:gid>", methods=["POST"])
+def delete_grievance(gid):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    user_id = session["user_id"]
+    role_id = session.get("role_id")
+
+    # Only students can delete
+    if role_id != 1:
+        flash("Only students can delete grievances.", "error")
+        return redirect(url_for("student_dashboard"))
+
+    conn = get_connection()
+    cur = conn.cursor(dictionary=True)
+
+    # Check grievance belongs to this student
+    cur.execute("""
+        SELECT grievance_id, student_id, status 
+        FROM Grievances 
+        WHERE grievance_id = %s
+    """, (gid,))
+    g = cur.fetchone()
+
+    if not g:
+        flash("Grievance not found.", "error")
+        return redirect(url_for("student_dashboard"))
+
+    # Check ownership
+    if g["student_id"] != user_id:
+        flash("You cannot delete someone else's grievance.", "error")
+        return redirect(url_for("student_dashboard"))
+
+    # Only allow delete if NEW
+    if g["status"] != "New":
+        flash("You can delete only grievances that are still NEW.", "error")
+        return redirect(url_for("student_dashboard"))
+
+    # Safe delete: remove attachments → logs → grievance
+    try:
+        cur.execute("DELETE FROM Attachments WHERE grievance_id = %s", (gid,))
+        cur.execute("DELETE FROM ActivityLog WHERE grievance_id = %s", (gid,))
+        cur.execute("DELETE FROM Grievances WHERE grievance_id = %s", (gid,))
+        conn.commit()
+        flash("Grievance deleted successfully!", "success")
+    except Exception as e:
+        conn.rollback()
+        flash("Error deleting grievance: " + str(e), "error")
+
+    finally:
+        cur.close()
+        conn.close()
+
+    return redirect(url_for("student_dashboard"))
+
 
 if __name__ == "__main__":
+
     app.run(debug=True)
