@@ -35,3 +35,9 @@
     {% endif %}
   </div>
 {% endblock %}
+{% if grievance.status == 'New' and grievance.student_id == session['user_id'] %}
+<form action="{{ url_for('delete_grievance', gid=grievance.grievance_id) }}" method="POST" onsubmit="return confirmDelete();">
+    <button class="btn btn-danger">Delete Grievance</button>
+</form>
+{% endif %}
+
