@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Super Admin — CGRS{% endblock %}
+
+{% block content %}
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <h2>Welcome, {{ name }}</h2>
+      <div class="muted">Super Administrator</div>
+    </div>
+    <a href="/logout" class="btn btn-ghost">Logout</a>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div>
+        <h3>Department Performance</h3>
+        <div class="muted">Open cases and resolution time by department</div>
+      </div>
+      <div class="muted">Total departments: {{ stats|length }}</div>
+    </div>
+
+    <div class="dept-grid">
+      {% for s in stats %}
+        <div class="dept-card">
+          <div>
+            <div class="dept-name">{{ s.name }}</div>
+            <div class="muted" style="font-size:13px;margin-top:6px">Overview</div>
+          </div>
+
+          <div class="dept-stats">
+            <div class="dept-stat">
+              <div style="display:flex;align-items:center">
+                <div class="dept-icon" aria-hidden="true">📁</div>
+                <div class="value">{{ s.open_count }}</div>
+              </div>
+              <div class="label">Open cases</div>
+            </div>
+
+            <div class="dept-stat">
+              <div style="display:flex;align-items:center">
+                <div class="dept-icon" aria-hidden="true">⏱️</div>
+                <div class="value">{{ s.avg_time }}</div>
+              </div>
+              <div class="label">Avg resolution</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

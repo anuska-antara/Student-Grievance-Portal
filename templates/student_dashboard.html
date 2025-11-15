@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard — CGRS{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div>
+        <h2>Welcome, {{ name }}</h2>
+        <div class="muted">Student Dashboard</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a href="/new_grievance" class="btn">+ New Grievance</a>
+        <a href="/logout" class="btn btn-ghost">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Your Grievances</h3>
+    <div class="grievance-grid">
+      {% for g in grievances %}
+        <div class="grievance-card">
+          <div>
+            <div class="grievance-title">{{ g.title }}</div>
+            <div class="grievance-meta">ID: {{ g.grievance_id }} • {{ g.submission_date }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+            <div>
+              {% if g.status == 'New' %}
+                <span class="badge badge-new">New</span>
+              {% elif g.status == 'In Progress' %}
+                <span class="badge badge-progress">In Progress</span>
+              {% elif g.status == 'Resolved' %}
+                <span class="badge badge-resolved">Resolved</span>
+              {% elif g.status == 'Closed' %}
+                <span class="badge badge-closed">Closed</span>
+              {% else %}
+                <span class="badge badge-closed">{{ g.status }}</span>
+              {% endif %}
+            </div>
+
+            <div class="grievance-actions">
+              <a href="/grievance/{{ g.grievance_id }}" class="btn btn-secondary view-btn">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

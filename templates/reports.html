@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Reports — CGRS{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Admin Reports</h2>
+
+  <p><strong>Total grievances:</strong> {{ total }}</p>
+
+  <h3>By status</h3>
+  <ul>
+    {% for row in by_status %}
+      <li>{{ row.status }}: {{ row.cnt }}</li>
+    {% endfor %}
+  </ul>
+
+  <h3>By department</h3>
+  <ul>
+    {% for row in by_dept %}
+      <li>Department {{ row.department_id }}: {{ row.cnt }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

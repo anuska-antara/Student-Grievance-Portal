@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Profile — CGRS{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Profile</h2>
+
+  <p><strong>Name:</strong> {{ profile.name }}</p>
+  <p><strong>Email:</strong> {{ profile.email }}</p>
+  <p><strong>Role:</strong> {{ profile.role }}</p>
+  <p><strong>{{ profile.id_label }}:</strong> {{ profile.id_value }}</p>
+  <p><strong>Department / Program:</strong> {{ profile.department }}</p>
+
+</div>
+{% endblock %}

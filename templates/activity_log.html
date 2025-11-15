@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Activity Log — CGRS{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h2>Activity Log</h2>
+  {% if events %}
+    <ul class="activity-list">
+      {% for ev in events %}
+        <li>
+          <div class="ts">{{ ev.ts }}</div>
+          <div class="msg">{{ ev.text }}</div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No activity yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

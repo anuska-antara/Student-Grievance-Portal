@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard — CGRS{% endblock %}
+
+{% block content %}
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <h2>Welcome, {{ name }}</h2>
+      <div class="muted">Department management</div>
+    </div>
+    <a href="/logout" class="btn btn-ghost">Logout</a>
+  </div>
+  <div class="card">
+    <div class="stats-row">
+      <div>
+        <h3>Department Grievances</h3>
+        <div class="muted">Overview of submissions for your department</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-value">{{ grievances|length }}</div>
+        <div class="stat-label">Total grievances</div>
+      </div>
+
+      <div class="filter-panel">
+        <form method="GET" id="filterForm">
+          <label for="statusFilter" class="muted" style="margin-right:8px">Filter:</label>
+          <select name="status" id="statusFilter" class="filter-select" onchange="document.getElementById('filterForm').submit()">
+            <option value="All" {% if request.args.get('status','All') == 'All' %}selected{% endif %}>All</option>
+            <option value="New" {% if request.args.get('status') == 'New' %}selected{% endif %}>New</option>
+            <option value="In Progress" {% if request.args.get('status') == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Resolved" {% if request.args.get('status') == 'Resolved' %}selected{% endif %}>Resolved</option>
+            <option value="Closed" {% if request.args.get('status') == 'Closed' %}selected{% endif %}>Closed</option>
+          </select>
+        </form>
+      </div>
+    </div>
+
+    <div class="table-wrap admin">
+      <table class="admin">
+        <thead>
+          <tr><th style="width:82px">ID</th><th>Title</th><th style="width:140px">Status</th><th>Student</th><th style="width:210px">Change Status</th></tr>
+        </thead>
+        <tbody>
+        {% for g in grievances %}
+          <tr>
+            <td>{{ g.grievance_id }}</td>
+            <td>{{ g.title }}</td>
+            <td>
+              {% if g.status == 'New' %}
+                <span class="badge badge-new">New</span>
+              {% elif g.status == 'In Progress' %}
+                <span class="badge badge-progress">In Progress</span>
+              {% elif g.status == 'Resolved' %}
+                <span class="badge badge-resolved">Resolved</span>
+              {% elif g.status == 'Closed' %}
+                <span class="badge badge-closed">Closed</span>
+              {% else %}
+                <span class="badge badge-closed">{{ g.status }}</span>
+              {% endif %}
+            </td>
+            <td>{{ g.student_name }}</td>
+            <td>
+              <form method="POST" action="/update_status/{{ g.grievance_id }}" style="display:flex;gap:8px;align-items:center">
+                <select name="status" class="status-select">
+                  <option {% if g.status == 'New' %}selected{% endif %}>New</option>
+                  <option {% if g.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                  <option {% if g.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                  <option {% if g.status == 'Closed' %}selected{% endif %}>Closed</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Update</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

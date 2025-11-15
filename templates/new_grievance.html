@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}New Grievance — CGRS{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h2>Submit New Grievance</h2>
+    <form method="POST" style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
+      <label>Title</label>
+      <input type="text" name="title" placeholder="Grievance Title" required>
+
+      <label>Description</label>
+      <textarea name="description" placeholder="Describe your issue" required></textarea>
+
+      <label>Department</label>
+      <select name="department_id" required>
+        <option value="">Select Department</option>
+        {% for d in departments %}
+          <option value="{{ d.department_id }}">{{ d.department_name }}</option>
+        {% endfor %}
+      </select>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="submit" class="btn">Submit</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

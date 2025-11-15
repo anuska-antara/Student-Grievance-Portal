@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Grievance Detail — CGRS{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:start;gap:12px">
+      <div>
+        <h2>{{ grievance.title }}</h2>
+        <div class="muted">ID: {{ grievance.grievance_id }} • Submitted: {{ grievance.submission_date }}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="muted">Status</div>
+        <div style="margin-top:6px;font-weight:700">{{ grievance.status }}</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <h4>Description</h4>
+      <div class="card" style="padding:14px">{{ grievance.description }}</div>
+    </div>
+
+    {% if grievance.comments %}
+    <div style="margin-top:14px">
+      <h4>Comments</h4>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        {% for c in grievance.comments %}
+          <div class="card">
+            <div class="muted">{{ c.author }} • {{ c.date }}</div>
+            <div style="margin-top:6px">{{ c.text }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}
