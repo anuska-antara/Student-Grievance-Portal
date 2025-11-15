@@ -163,5 +163,11 @@
     })();
   </script>
   {% block extra_scripts %}{% endblock %}
+  <script>
+function confirmDelete() {
+    return confirm("Are you sure you want to delete this grievance? This action cannot be undone.");
+}
+</script>
 </body>
 </html>
+
