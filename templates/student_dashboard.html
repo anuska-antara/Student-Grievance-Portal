@@ -18,35 +18,40 @@
 
   <div class="card">
     <h3>Your Grievances</h3>
+
     <div class="grievance-grid">
+
       {% for g in grievances %}
-        <div class="grievance-card">
-          <div>
-            <div class="grievance-title">{{ g.title }}</div>
-            <div class="grievance-meta">ID: {{ g.grievance_id }} • {{ g.submission_date }}</div>
-          </div>
+      <div class="grievance-card">
 
-          <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
-            <div>
-              {% if g.status == 'New' %}
-                <span class="badge badge-new">New</span>
-              {% elif g.status == 'In Progress' %}
-                <span class="badge badge-progress">In Progress</span>
-              {% elif g.status == 'Resolved' %}
-                <span class="badge badge-resolved">Resolved</span>
-              {% elif g.status == 'Closed' %}
-                <span class="badge badge-closed">Closed</span>
-              {% else %}
-                <span class="badge badge-closed">{{ g.status }}</span>
-              {% endif %}
-            </div>
+        <h3>{{ g.title }}</h3>
 
-            <div class="grievance-actions">
-              <a href="/grievance/{{ g.grievance_id }}" class="btn btn-secondary view-btn">View Details</a>
-            </div>
-          </div>
+        <p class="muted">
+          ID: {{ g.grievance_id }} • {{ g.submission_date }}
+        </p>
+
+        <span class="badge bg-primary">{{ g.status }}</span>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+
+          <a href="{{ url_for('grievance_detail', gid=g.grievance_id) }}"
+             class="btn btn-outline-primary">
+             View Details
+          </a>
+
+          {% if g.status == 'New' %}
+          <form action="{{ url_for('delete_grievance', gid=g.grievance_id) }}"
+                method="POST"
+                onsubmit="return confirmDelete();">
+            <button class="btn btn-danger">Delete</button>
+          </form>
+          {% endif %}
+
         </div>
+
+      </div>
       {% endfor %}
+
     </div>
   </div>
 {% endblock %}
