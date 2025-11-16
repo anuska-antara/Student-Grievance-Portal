@@ -4,12 +4,14 @@
 {% block content %}
 <div class="card">
   <h2>Activity Log</h2>
+
   {% if events %}
-    <ul class="activity-list">
-      {% for ev in events %}
-        <li>
-          <div class="ts">{{ ev.ts }}</div>
-          <div class="msg">{{ ev.text }}</div>
+    <ul style="list-style:none;padding-left:0;">
+      {% for e in events %}
+        <li class="activity-entry">
+          <div class="timestamp">{{ e.ts }}</div>
+          <div class="message">{{ e.text }}</div>
+          <div class="user muted">by {{ e.user }}</div>
         </li>
       {% endfor %}
     </ul>
