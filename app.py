@@ -273,7 +273,7 @@ def profile():
 
 
 # ---------------- ACTIVITY LOG ----------------
-@app.route("/activity_log")
+@app.route("/activity")
 def activity_log():
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -281,29 +281,38 @@ def activity_log():
     conn = get_connection()
     cur = conn.cursor(dictionary=True)
 
-    # Fetch student's grievances
-    cur.execute("""
-        SELECT grievance_id, title, status, submission_date, resolved_at
-        FROM Grievances
-        WHERE student_id = %s
-        ORDER BY submission_date DESC
-    """, (session["user_id"],))
+    # Get all grievances belonging to this student
+    cur.execute("SELECT grievance_id, title FROM Grievances WHERE student_id = %s",
+                (session["user_id"],))
     grievances = cur.fetchall()
 
-    # Build timeline from ActivityLog (your DB already has this)
-    cur.execute("""
-        SELECT log_timestamp, action_description
-        FROM ActivityLog
-        WHERE user_id = %s
-        ORDER BY log_timestamp DESC
-    """, (session["user_id"],))
-    logs = cur.fetchall()
+    events = []
+
+    for g in grievances:
+
+        cur.callproc("sp_get_grievance_activity", (g["grievance_id"],))
+
+        # FIXED: stored_results is a generator, so convert to list
+        results = list(cur.stored_results())
+        if results:
+            rows = results[0].fetchall()
+        else:
+            rows = []
+
+        for a in rows:
+            events.append({
+                "ts": a["log_timestamp"],
+                "text": f"{a['action_description']} — ({g['title']})",
+                "user": a["user_name"]
+            })
 
     cur.close()
     conn.close()
 
-    return render_template("activity_log.html", grievances=grievances, logs=logs)
+    # Sort newest → oldest
+    events.sort(key=lambda x: x["ts"], reverse=True)
 
+    return render_template("activity_log.html", events=events)
 
 # ---------------- REPORTS (admin-only) ----------------
 @app.route("/reports")
@@ -403,3 +412,4 @@ def delete_grievance(gid):
 if __name__ == "__main__":
 
     app.run(debug=True)
+
